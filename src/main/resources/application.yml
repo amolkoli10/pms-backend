@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: deckard-pms-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pms
+    username: postgres
+    password: barca
+  jpa:
+    hibernate:
+      ddl-auto: update
