@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Player Management</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<h1>Player Management System</h1>
+<a href="/players/new">Add Player</a>
+<h2>Players List</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Club</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="player : ${players}">
+        <td th:text="${player.id}"></td>
+        <td th:text="${player.firstName}"></td>
+        <td th:text="${player.lastName}"></td>
+        <td th:text="${player.club}"></td>
+        <td>
+            <a th:href="@{/players/{id}/edit(id=${player.id})}">Edit</a>
+            <a th:href="@{/players/{id}/delete(id=${player.id})}">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
