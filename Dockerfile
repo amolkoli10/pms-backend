@@ -1,20 +1,24 @@
-FROM maven:3.8.3-openjdk-17 as builder
+FROM gradle:8-jdk17 AS build
 
 LABEL maintainer="Amol Koli <koli.amol54@gmail.com>" \
       version="1.0" \
       description="This is a Spring Boot application for managing players."
 
-WORKDIR /app
+# Set up permissions and copy project files
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
 
-COPY . .
+# Build the application
+RUN gradle clean build -x test --no-daemon
 
-RUN ./gradlew clean build -x test -Dorg.gradle.daemon=false
+# Use a distroless image for the final deployable image
+FROM gcr.io/distroless/java17-debian11 AS deploy
 
-FROM gcr.io/distroless/java17-debian11 AS deployer
-
-COPY --from=builder /app/build/libs/*.jar /app/deckard-pms-backend.jar
-
+# Expose the application port
 EXPOSE 8080
+
+# Copy the jar file from the build stage
+COPY --from=build /home/gradle/src/build/libs/pms-backend-0.0.1-SNAPSHOT.jar /app/deckard-pms-backend.jar
 
 # Start the application
 ENTRYPOINT ["java", "-jar", "/app/deckard-pms-backend.jar"]
