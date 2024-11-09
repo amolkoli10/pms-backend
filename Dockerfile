@@ -15,7 +15,7 @@ RUN gradle clean build -x test --no-daemon
 FROM gcr.io/distroless/java17-debian11 AS deploy
 
 # Expose the application port
-EXPOSE 8080
+EXPOSE 8083
 
 # Copy the jar file from the build stage
 COPY --from=build /home/gradle/src/build/libs/pms-backend-0.0.1-SNAPSHOT.jar /app/deckard-pms-backend.jar
