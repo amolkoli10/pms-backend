@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8083"
+      - "8083:8083"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/deckard
       SPRING_DATASOURCE_USERNAME: postgresql
