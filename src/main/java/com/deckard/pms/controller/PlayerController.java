@@ -4,45 +4,59 @@ import com.deckard.pms.dto.PlayerDTO;
 import com.deckard.pms.service.PlayerService;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
-@RestController
-@RequestMapping("/api/players")
+@Controller
 public class PlayerController {
 
-  private PlayerService playerService;
+  private final PlayerService playerService;
 
-  @PostMapping
-  public ResponseEntity<PlayerDTO> createPlayer(@RequestBody PlayerDTO playerDTO) {
-    PlayerDTO savedPlayer = playerService.createPlayer(playerDTO);
-    return new ResponseEntity<>(savedPlayer, HttpStatus.CREATED);
+  @GetMapping("/players")
+  public String listPlayers(Model model) {
+    List<PlayerDTO> players = playerService.getAllPlayers();
+    if (players.isEmpty()) {
+      PlayerDTO defaultPlayer = new PlayerDTO();
+      defaultPlayer.setId(0L);
+      defaultPlayer.setFirstName("Deckard");
+      defaultPlayer.setLastName("Shaw");
+      defaultPlayer.setClub("Fulham");
+      players.add(defaultPlayer);
+    }
+    model.addAttribute("players", players);
+    return "players";
   }
 
-  @GetMapping("{id}")
-  public ResponseEntity<PlayerDTO> getPlayerById(@PathVariable("id") Long playerId) {
-    PlayerDTO playerDTO = playerService.getPlayerById(playerId);
-    return ResponseEntity.ok(playerDTO);
+  @GetMapping("/players/new")
+  public String showCreateForm(Model model) {
+    model.addAttribute("player", new PlayerDTO());
+    return "player-form";
   }
 
-  @GetMapping
-  public ResponseEntity<List<PlayerDTO>> getAllPlayers() {
-    List<PlayerDTO> allPlayers = playerService.getAllPlayers();
-    return ResponseEntity.ok(allPlayers);
+  @PostMapping("/players")
+  public String create(@ModelAttribute PlayerDTO player) {
+    playerService.createPlayer(player);
+    return "redirect:/players";
   }
 
-  @PutMapping("{id}")
-  public ResponseEntity<PlayerDTO> updatePlayer(
-      @PathVariable("id") Long playerId, @RequestBody PlayerDTO updatedPlayerDTO) {
-    PlayerDTO playerDTO = playerService.updatePlayer(playerId, updatedPlayerDTO);
-    return ResponseEntity.ok(playerDTO);
+  @GetMapping("/players/{id}/edit")
+  public String showEditForm(@PathVariable Long id, Model model) {
+    PlayerDTO player = playerService.getPlayerById(id);
+    model.addAttribute("player", player);
+    return "player-form";
   }
 
-  @DeleteMapping("{id}")
-  public ResponseEntity<String> deletePlayer(@PathVariable("id") Long playerId) {
-    playerService.deletePlayer(playerId);
-    return ResponseEntity.ok("Player Deleted Successfully");
+  @PostMapping("/players/{id}")
+  public String update(@PathVariable Long id, @ModelAttribute PlayerDTO player) {
+    playerService.updatePlayer(id, player);
+    return "redirect:/players";
+  }
+
+  @GetMapping("/players/{id}/delete")
+  public String delete(@PathVariable Long id) {
+    playerService.deletePlayer(id);
+    return "redirect:/players";
   }
 }
