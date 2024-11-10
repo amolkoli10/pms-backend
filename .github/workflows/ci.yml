@@ -29,10 +29,7 @@ jobs:
       
     - name: Build with Gradle Wrapper
       run: ./gradlew clean build -x test
-
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_TOKEN }}" --password-stdin  
-
+      
     # Build and push Docker image
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v3
