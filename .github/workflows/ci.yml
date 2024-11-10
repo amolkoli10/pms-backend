@@ -31,12 +31,18 @@ jobs:
       run: ./gradlew clean build -x test
       
     # Build and push Docker image
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v3
+    - 
+      name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    -
+      name: Login to Docker Hub
+      uses: docker/login-action@v3
       with:
-        context: .
-        push: true
-        tags: deckard54/pms-backend-spring-boot:latest
-        registry: docker.io
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+    -
+      name: Build and push
+      uses: docker/build-push-action@v6
+      with:
+          push: true
+          tags: deckard54/pms-backend-spring-boot:latest
