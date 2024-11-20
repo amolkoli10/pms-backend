@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: deckard54/pms-backend-spring-boot:latest
     ports:
       - "8083:8083"
     environment:
